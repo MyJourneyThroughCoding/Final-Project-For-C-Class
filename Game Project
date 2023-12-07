@@ -1,0 +1,429 @@
+//video game 
+//base class is militarySoilder
+//derived class is bowArcher
+//derived class is crossbowArcher
+//derived class is spearSoilder
+//derived class is knight
+//program then displays the stats of each military soilder
+//program has a currency system where each soilder has a cost
+//uses virtual member to call the print function of each derived class
+#include <iostream>
+#include <random>
+#include "bowArcher.h"
+#include "crossbowArcher.h"
+#include "spearSoilder.h"
+#include "knight.h"
+
+void bowArcher1(int& count, int& currentMoney);
+void crossbowArcher1(int& count, int& currentMoney);
+void spearSoilder1(int& count, int& currentMoney);
+void knight1(int& count, int& currentMoney);
+void knightSelection(int& money, int& bowCounter, int& crossbowCounter, int& spearCounter, int& knightCounter);
+void nonKnightSelection(int& money, int& bowCounter, int& crossbowCounter, int& spearCounter);
+void bowSelection(int& money, int& bowCounter);
+void printBowStats(bowArcher bowPrint);
+void printCrossStats(class crossbowArcher crossPrint);
+void printSpearStats(class spearSoilder spearPrint);
+void printKnightStats(class knight knightPrint);
+void deleteArray(bowArcher *bowArray, crossbowArcher *crossArray, spearSoilder *spearArray, knight *knightArray, int bowCounter, int crossbowCounter, int spearCounter, int knightCounter);
+void sumOfStats(bowArcher *bowArray, crossbowArcher *crossArray, spearSoilder *spearArray, knight *knightArray, int bowCounter, int crossbowCounter, int spearCounter, int knightCounter, int& bowHealth, int& crossbowHealth, int& spearHealth, int& knightHealth, int& bowDamage, int& crossbowDamage, int& spearDamage, int& knightDamage);
+int randomNumber(int ran1, int ran2);
+bool levelOne(int& bowHealth, int& crossbowHealth, int& spearHealth, int& knightHealth, int bowDamage, int crossbowDamage, int spearDamage, int knightDamage, int bowCounter, int crossbowCounter, int spearCounter, int knightCounter);
+
+using namespace std;
+
+int main() {
+  int bowCounter=0;
+  int crossbowCounter=0;
+  int spearCounter=0;
+  int knightCounter=0;
+  int currentMoney=100;
+  int choice;
+  class bowArcher bowPrint;
+  class crossbowArcher crossPrint;
+  class spearSoilder spearPrint;
+  class knight knightPrint;
+
+  int sumBowHealth=0;
+  int sumCrossHealth=0;
+  int sumSpearHealth=0;
+  int sumKnightHealth=0;
+  int sumBowDamage=0;
+  int sumCrossDamage=0;
+  int sumSpearDamage=0;
+  int sumKnightDamage=0;
+
+  int resultOne=0;
+
+  cout << "Choose Dificulty:" << endl;
+  cout << "1. Easy" << endl;
+  cout << "2. Medium" << endl;
+  cout << "3. Hard" << endl;
+  cin >> choice;
+
+  if(choice==1)
+    currentMoney=300;
+  else if(choice==2)
+    currentMoney=200;
+  else 
+    currentMoney=100;
+
+  printBowStats(bowPrint);
+  printCrossStats(crossPrint);
+  printSpearStats(spearPrint);
+  printKnightStats(knightPrint);
+  
+  cout << "You have " << currentMoney << " dollars" << endl;
+  cout << "Buy your army" << endl;
+  
+  do{
+  if(currentMoney>=60)
+  {
+    knightSelection(currentMoney, bowCounter, crossbowCounter, spearCounter, knightCounter);
+  }
+  else if(currentMoney<60 && currentMoney>=10)
+  {
+    nonKnightSelection(currentMoney, bowCounter, crossbowCounter, spearCounter);
+  }
+  else 
+    bowSelection(currentMoney, bowCounter);
+  }while(currentMoney>0);
+
+  cout << "Your army consists of: " << endl;
+  cout << bowCounter << " bow archers" << endl;
+  cout << crossbowCounter << " crossbow archers" << endl;
+  cout << spearCounter << " spear soilders" << endl;
+  cout << knightCounter << " knights" << endl;
+  cout << endl << endl;
+
+  bowArcher *numOfBows;
+  numOfBows = new bowArcher[bowCounter];
+  crossbowArcher *numOfCrossbows;
+  numOfCrossbows = new crossbowArcher[crossbowCounter];
+  spearSoilder *numOfSpears;
+  numOfSpears = new spearSoilder[spearCounter];
+  knight *numOfKnights;
+  numOfKnights = new knight[knightCounter];
+
+  deleteArray(numOfBows, numOfCrossbows, numOfSpears, numOfKnights, bowCounter, crossbowCounter, spearCounter, knightCounter);
+  sumOfStats(numOfBows, numOfCrossbows, numOfSpears, numOfKnights, bowCounter, crossbowCounter, spearCounter, knightCounter, sumBowHealth, sumCrossHealth, sumSpearHealth, sumKnightHealth, sumBowDamage, sumCrossDamage, sumSpearDamage, sumKnightDamage);
+
+  resultOne=levelOne(sumBowHealth, sumCrossHealth, sumSpearHealth, sumKnightHealth, sumBowDamage, sumCrossDamage, sumSpearDamage, sumKnightDamage, bowCounter, crossbowCounter, spearCounter, knightCounter);
+
+  if(resultOne==true)
+    cout << "You win round one." << endl;
+  else if (resultOne==false)
+    cout << "You lose round one." << endl;
+  
+  return 0; 
+}
+
+void bowArcher1(int& count, int& currentMoney)
+{
+  currentMoney=currentMoney-5;
+  count++;
+}
+
+void crossbowArcher1(int& count, int& currentMoney)
+{
+  currentMoney=currentMoney-10;
+  count++;
+}
+
+void spearSoilder1(int& count, int& currentMoney)
+{
+  currentMoney=currentMoney-10;
+  count++;
+}
+
+void knight1(int& count, int& currentMoney)
+{
+  currentMoney=currentMoney-60;
+  count++;
+}
+
+void knightSelection(int& money, int& bowCounter, int& crossbowCounter, int& spearCounter, int& knightCounter)
+{
+  int selection;
+  do{
+    cout << "Current Balance: " << money << endl;
+    cout << "1. Bow Archer 5 Dollars" << endl;
+    cout << "2. Crossbow Archer 10 Dollars" << endl;
+    cout << "3. Spear Soilder 10 Dollars" << endl;
+    cout << "4. Knight 60 dollars" << endl;
+      cin >> selection;
+    switch(selection)
+      {
+        case 1:
+          bowArcher1(bowCounter, money);
+          break;
+        case 2:
+          crossbowArcher1(crossbowCounter, money);
+          break;
+        case 3:
+          spearSoilder1(spearCounter, money);
+          break;
+        case 4:
+          knight1(knightCounter, money);
+          break;
+      }
+  }while(money>=60);
+}
+
+void nonKnightSelection(int& money, int& bowCounter, int& crossbowCounter, int& spearCounter)
+{
+  int selection;
+  
+  do{
+    cout << "Current Balance: " << money << endl;
+    cout << "1. Bow Archer 5 Dollars" << endl;
+    cout << "2. Crossbow Archer 10 Dollars" << endl;
+    cout << "3. Spear Soilder 10 Dollars" << endl;
+    cin >> selection;
+    
+    switch(selection)
+      {
+        case 1:
+          bowArcher1(bowCounter, money);
+          break;
+        case 2:
+          crossbowArcher1(crossbowCounter, money);
+          break;
+        case 3:
+          spearSoilder1(spearCounter, money);
+          break;
+      }
+    }while(money<60 && money>=10);
+}
+
+void bowSelection(int& money, int& bowCounter)
+{
+  int selection;
+  
+  do{
+    cout << "Current Balance: " << money << endl;
+    cout << "1. Bow Archer 5 Dollars" << endl;
+    cin >> selection;
+    switch(selection)
+      {
+        case 1:
+          bowArcher1(bowCounter, money);
+          break;
+      }
+  }while(money>=5);
+}
+
+void printBowStats(class bowArcher print)
+{
+  print.print();
+}
+
+void printCrossStats(class crossbowArcher crossPrint)
+{
+  crossPrint.print();
+}
+
+void printSpearStats(class spearSoilder spearPrint)
+{
+  spearPrint.print();
+}
+
+void printKnightStats(class knight knightPrint)
+{
+  knightPrint.print();
+}
+
+void deleteArray(bowArcher *bowArray, crossbowArcher *crossArray, spearSoilder *spearArray, knight *knightArray, int bowCounter, int crossbowCounter, int spearCounter, int knightCounter)
+{
+  if(bowCounter<=0)
+    delete [] bowArray;
+  if(crossbowCounter<=0)
+    delete [] crossArray;
+  if(spearCounter<=0)
+    delete [] spearArray;
+  if(knightCounter<=0)
+    delete [] knightArray;
+}
+
+void sumOfStats(bowArcher *bowArray, crossbowArcher *crossArray, spearSoilder *spearArray, knight *knightArray, int bowCounter, int crossbowCounter, int spearCounter, int knightCounter, int& bowHealth, int& crossbowHealth, int& spearHealth, int& knightHealth, int& bowDamage, int& crossbowDamage, int& spearDamage, int& knightDamage)
+{
+  for(int i=0; i<bowCounter; i++)
+    bowHealth+=bowArray[i].getHealth();
+  for(int j=0; j<crossbowCounter; j++)
+    crossbowHealth+=crossArray[j].getHealth();
+  for(int k=0; k<spearCounter; k++)
+    spearHealth+=spearArray[k].getHealth();
+  for(int x=0; x<knightCounter; x++)
+    knightHealth+=knightArray[x].getHealth();
+  for(int f=0; f<bowCounter; f++)
+    bowDamage+=bowArray[f].getDamage();
+  for(int h=0; h<crossbowCounter; h++)
+    crossbowDamage+=crossArray[h].getDamage();
+  for(int a=0; a<spearCounter; a++)
+    spearDamage+=spearArray[a].getDamage();
+  for(int t=0; t<knightCounter; t++)
+    knightDamage = knightDamage + knightArray[t].getDamage(); 
+
+  if(bowCounter>0)
+    delete [] bowArray;
+  if (crossbowCounter>0)
+    delete [] crossArray;
+  if (spearCounter>0)
+    delete [] spearArray;
+  if(knightCounter>0)
+    delete [] knightArray;
+}
+
+int randomNumber(int ran1, int ran2) {
+    // Use a random_device to seed the random number generator
+    random_device rd;
+
+    // Use the random number generator to generate a random number between 1 and 10
+    default_random_engine generator(rd());
+    uniform_int_distribution<int> distribution(ran1, ran2);
+
+    return distribution(generator);
+}
+
+bool levelOne(int& bowHealth, int& crossbowHealth, int& spearHealth, int& knightHealth, int bowDamage, int crossbowDamage, int spearDamage, int knightDamage, int bowCounter, int crossbowCounter, int spearCounter, int knightCounter)
+{
+  int enemyHealth=200;
+  int enemyDamage=100;
+  //int knightOrgin=knightHealth;
+  int ran=0;
+  int sumDamage=bowDamage+crossbowDamage+spearDamage+knightDamage;
+  int sumHealth=bowHealth+crossbowHealth+spearHealth+knightHealth;
+  int counter1=0;
+  int counter2=0;
+  int counter3=0;
+  int counter4=0;
+  
+  cout << "Lord Barclay and his army has challenged you and your army to a fight." << endl;
+  cout << "He has the advantage of suprise so he hits first." << endl << endl;
+  
+do{
+
+  do{
+  ran=randomNumber(1, 10);
+
+  if(ran==1 || ran==2)
+  {
+    if(bowCounter>0)
+    {
+      cout << "Barclays army hits your archers." << endl << endl;
+      bowHealth-=enemyDamage;
+      break;
+    }
+  }
+  else
+  {
+    ran=randomNumber(3, 10);
+  }
+
+  if(ran==3 || ran==4)
+  {
+    if(crossbowCounter>0)
+    {
+      cout << "Barclays army hits your crossbows." << endl << endl;
+      crossbowHealth-=enemyDamage;
+      break;
+    }
+  }
+    else
+  {
+      ran=randomNumber(5, 10);
+  }
+  
+  if(ran==5 || ran==6 || ran==7)
+  {
+    if(spearCounter>0)
+    {
+      cout << "Barclays army hits your spears." << endl << endl;
+      spearHealth-=enemyDamage;
+      break;
+    }
+    else
+    {
+      ran=randomNumber(8, 10);
+    }
+  }
+
+if(ran==8||ran==9||ran==10)
+{
+  if (knightCounter>0)
+  {
+    cout << "Barclays army hits your knights." << endl << endl;
+    knightHealth-=enemyDamage;
+    break;
+  }
+}
+  }while(ran>0);
+
+  if(counter1<=0)
+  {
+  if(bowCounter>0 && bowHealth<=0)
+  {
+    cout << "Your bow troops died." << endl;
+    sumDamage-=bowDamage;
+    counter1++;
+  }
+  }
+  if(counter2<=0)
+  {
+  if(crossbowCounter>0 && crossbowHealth<=0)
+  {
+    cout << "Your crossbow troops died." << endl;
+    sumDamage-=crossbowDamage;
+    counter2++;
+  }
+  }
+
+  if(counter3<=0)
+  {
+  if(spearCounter>0 && spearHealth<=0)
+  {
+    cout << "Your spear troops died." << endl;
+    sumDamage-=spearDamage;
+    counter3++;
+  }
+  }
+
+  if(counter4<=0)
+  {
+    if(knightCounter>0 && knightHealth<=0)
+    {
+      cout << "Your knight troops died." << endl;
+      sumDamage-=knightDamage;
+      counter4++;
+    }
+  }
+  
+  if(bowHealth<=0)
+    bowHealth=0;
+  else if(crossbowHealth<=0)
+    crossbowHealth=0;
+  else if(spearHealth<=0)
+    spearHealth=0;
+  else if(knightHealth<=0)
+    knightHealth=0;
+
+  sumHealth = bowHealth+crossbowHealth+spearHealth+knightHealth;
+
+  if(sumHealth>0)
+  { 
+  cout << "Its your turn." << endl;
+  cout << "You hit Barclay" << endl << endl;
+  
+  enemyHealth-=sumDamage;
+  }
+
+  if (enemyHealth>0 && sumHealth >0)
+    cout << "After a tiring battle both sides are still standing. The sun has gone down, so both sides agree to take a break and continue tomorrow." << endl << endl;
+
+}while(enemyHealth>0 && sumHealth>0); 
+  
+  if(enemyHealth<=0)
+    return true;
+  else
+    return false;
+}
